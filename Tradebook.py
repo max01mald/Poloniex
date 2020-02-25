@@ -1,6 +1,7 @@
+import os
 import time
 import datetime
-from QuickSort import QuickSort
+from Algorithms.QuickSort import QuickSort
 
 class Book:
 	Type = ""
@@ -13,10 +14,16 @@ class Book:
 	
 	
 	def __init__(self):
-		self.Date = "{:%Y-%m-%d %H:%M:%S}".format(datetime.datetime.now()) + ""
-	
+		self.Type = ""
+                self.Id = ""
+                self.Date = "{:%Y-%m-%d %H:%M:%S}".format(datetime.datetime.now()) + ""
+	        self.Currency = ""
+                self.Price = []
+                self.Quantity = []
+                self.Sum = []
+
 	def __del__(self):
-		print "delete"
+		#print "delete"
 		self.Type = ""
 		self.Id = ""
 		self.Date = ""
@@ -39,46 +46,54 @@ class Book:
 			print "%.8f %.8f %.8f" %(float(self.Price[i]), float(self.Quantity[i]), float(self.Sum[i]))
 			i+=1
 			
-	def writeBook(self, name):
-		fo = open(name, "a")
-		
-		fo.write("\n")
-		fo.write(self.Type + "\n")
-		fo.write(self.Id + "\n")
-		fo.write(self.Date + "\n")
-		fo.write(self.Currency + "\n")
-		fo.write("\n")
-		fo.write("PRICES ----- QUANTITY ----- SUM\n")
-		
-		i=1
-		while i<len(self.Price):
-			fo.write("%.8f %.8f %.8f\n" %(float(self.Price[i]), float(self.Quantity[i]), float(self.Sum[i])))
-			i+=1
-		
-		fo.close
-	
-		
+	def writeBook(self):
+            
+            if not os.path.exists(os.path.dirname(os.path.realpath(__file__)) + "/Tradebook/" + self.Currency):
+                os.makedirs(os.path.dirname(os.path.realpath(__file__)) + "/Tradebook/" + self.Currency)
 
+            os.chdir(os.path.dirname(os.path.realpath(__file__)) + "/Tradebook/")
 
+            if not os.path.exists(os.path.dirname(os.path.realpath(__file__)) + "/Tradebook/" + self.Currency):
+                os.makedirs(os.path.dirname(os.path.realpath(__file__)) + "/Tradebook/" + self.Currency)
 
+            os.chdir(os.path.dirname(os.path.realpath(__file__)) + "/Tradebook/" + self.Currency)
+
+            name = self.Type + ".txt"
+            header = self.Date + " -- PRICES -- QUANTITY -- SUM\n"
+	    fo = open(name, "a+")
+	   
+            fo.seek(0,0)
+            file_data = fo.read()
+            fo.seek(0,0)
+            fo.truncate()
+
+            if(len(file_data) != 0):
+                file_data = file_data[len(header):]
+
+            fo.write(header)
+
+	    i=1
+	    while i<len(self.Price):
+	    	fo.write("%.8f %.8f %.8f\n" %(float(self.Price[i]), float(self.Quantity[i]), float(self.Sum[i])))
+	    	i+=1
+	    
+	    fo.close
+    
+		
 def parser(string, pair):
 	
 	book = Book()
 	book2 = Book()
 	
 	i = 0
-	
-	while i<len(pair):
-		if pair[i] == '_':
-			book.Currency = pair[i+1:i+4]
-			book2.Currency = pair[i+1:i+4]
+        while i<len(pair):
+                if pair[i] == '_':
+			book.Currency = pair[i+1:]
+			book2.Currency = pair[i+1:]
 		i+=1
-	
 	i=0
 	
-	
-	section =0 
-	
+	section = 0 
 	while i<len(string):
 		if string[i] == "b":
 			section = 1
@@ -118,8 +133,11 @@ def parser(string, pair):
 				i+=1
 				
 		if string[i] == 's':
-			book.Id = string[i+6:i+14]
-			book2.Id = string[i+6:i+14]
+			j = i+6
+                        while string[j] != "}":
+                            j+=1
+                        book.Id = string[i+6:j]
+			book2.Id = string[i+6:j]
 		i+=1
 		
 	sort1 = QuickSort(book.Price, book.Quantity)
@@ -142,12 +160,13 @@ def parser(string, pair):
 		book2.Sum = book2.Sum + [sum2]
 		i+=1
 		
-			
+	'''		
 	book.printBook()
 	book2.printBook()
+        '''
 	
-	'''name = book.Currency + ".txt"
-	book.writeBook(name)'''
+	book.writeBook()
+        book2.writeBook()
 	
 	del book
 	del book2

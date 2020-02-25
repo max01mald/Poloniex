@@ -64,114 +64,120 @@ class TradeBook:
 			self.Trades = self.Trades + [NBook]
 			
 	def WriteBuy(self):
+	    
+            if not os.path.exists(os.path.dirname(os.path.realpath(__file__)) + "/TradeHistory/"):
+                os.makedirs(os.path.dirname(os.path.realpath(__file__)) + "/TradeHistory/")
+            
+            os.chdir(os.path.dirname(os.path.realpath(__file__)) + "/TradeHistory")
+		
+	    if not os.path.exists(os.path.dirname(os.path.realpath(__file__)) + "/TradeHistory/" + self.Currency):
+   	    	os.makedirs(os.path.dirname(os.path.realpath(__file__)) + "/TradeHistory/" + self.Currency)
+   			
+   	    os.chdir(os.path.dirname(os.path.realpath(__file__)) + "/TradeHistory/" + self.Currency)
+   			
+	    name = "Buys.txt"
+			
+	    if self.am_BTC > 1:
+		fo = open(name, "a+")
+		fo.seek(0,0)
+		file_data = fo.read()
+		fo.seek(0,0)
+		fo.truncate()
+
+                header = "DATE -- CURRENCY -- TRADE_ID -- AMOUNT -- RATE -- SUM_BTC\n" 
+		s = "%s %s %d %.8f %.8f %.8f" % (self.date, self.Currency, self.globalTradeID, self.amount, self.rate, self.am_BTC)
+	        		
+                if(len(file_data) != 0):
+                    file_data = file_data[len(header):]
+
+		beg = 0
+                end = beg
+		s2 = ""
+		exist = True
+		    
+		while end <len(file_data):
+		    
+                    if file_data[end] == "\n":
+                        s2 = file_data[beg:end]                        
+                        beg = end + 1
 	
-		os.chdir("/Users/Max/Desktop/CRYPTO/Poloniex/TradeHistory")
+		    if s2 == s:
+			exist = False
+                    
+                    s2 = ""
+		    end+=1
 		
-		
-		if not os.path.exists("/Users/Max/Desktop/CRYPTO/Poloniex/TradeHistory/" + self.Currency):
-   			os.makedirs("/Users/Max/Desktop/CRYPTO/Poloniex/TradeHistory/" + self.Currency)
-   			
-   		os.chdir("/Users/Max/Desktop/CRYPTO/Poloniex/TradeHistory/" + self.Currency)
-   			
-		name = self.Currency + "_Buys.txt"
+                fo.write(header)
+
+		if exist:
+		    fo.write(s)
+		    fo.write("\n")
+                    print "%s Found a 1>BTC buy" % (self.date)
 			
-		
-		
-		if self.am_BTC > 1:
-			fo = open(name, "a+")
-			fo.seek(0,0)
-			file_data = fo.read()
-			fo.seek(0,0)
-			fo.truncate()
-			s = "%s %s %d %.8f %.8f %.8f" % (self.date, self.Currency, self.globalTradeID, self.amount, self.rate, self.am_BTC)
-			
-			i = 0
-			s2 = ""
-			exist = True
-			
-			while i<len(file_data):
-				count = 0
-				if file_data[i:i+4] == "2018":
-					while count != 3:
-						if file_data[i] == ".":
-							count+=1
-						if count != 3:
-							s2 += file_data[i]
-						else:
-							s2 += file_data[i:i+9]
-						i+=1
-					
-				if s2 == s:
-					exist = False
-					
-				s2 = ""
-				i+=1
-			
-			if exist:
-				fo.write(s)
-				fo.write("\n\n")
-				print "%s Found a 1>BTC buy" % (self.date)
-			
-			fo.write(file_data)	
-			fo.close()
+		fo.write(file_data)	
+		fo.close()
 		
 			
-		os.chdir("/Users/Max/Desktop/CRYPTO/Poloniex")
+	    os.chdir(os.path.dirname(os.path.realpath(__file__)))
 		
 	
 	def WriteSell(self):
-	
-		os.chdir("/Users/Max/Desktop/CRYPTO/Poloniex/TradeHistory")
-		
-		
-		if not os.path.exists("/Users/Max/Desktop/CRYPTO/Poloniex/TradeHistory/" + self.Currency):
-   			os.makedirs("/Users/Max/Desktop/CRYPTO/Poloniex/TradeHistory/" + self.Currency)
-   			
-   		os.chdir("/Users/Max/Desktop/CRYPTO/Poloniex/TradeHistory/" + self.Currency)
-   			
-		name = self.Currency + "_Sells.txt"
+	    
+            if not os.path.exists(os.path.dirname(os.path.realpath(__file__)) + "/TradeHistory/"):
+                os.makedirs(os.path.dirname(os.path.realpath(__file__)) + "/TradeHistory/")
 
-		if self.am_BTC > 1:
-			fo = open(name, "a+")
-			fo.seek(0,0)
-			file_data = fo.read()
-			fo.seek(0,0)
-			fo.truncate()
+	    os.chdir(os.path.dirname(os.path.realpath(__file__)) + "/TradeHistory")
+		
+	    if not os.path.exists(os.path.dirname(os.path.realpath(__file__)) + "/TradeHistory/" + self.Currency):
+   	    	os.makedirs(os.path.dirname(os.path.realpath(__file__)) + "/TradeHistory/" + self.Currency)
+   			
+   	    os.chdir(os.path.dirname(os.path.realpath(__file__)) + "/TradeHistory/" + self.Currency)
+   			
+	    name = "Sells.txt"
+
+	    if self.am_BTC > 1:
+                fo = open(name, "a+")
+		fo.seek(0,0)
+		file_data = fo.read()
+		fo.seek(0,0)
+		fo.truncate()
 			
-			s = "%s %s %d %.8f %.8f %.8f" % (self.date, self.Currency, self.globalTradeID, self.amount, self.rate, self.am_BTC)
+		header = "DATE -- CURRENCY -- TRADE_ID -- AMOUNT -- RATE -- SUM_BTC\n"
+                s = "%s %s %d %.8f %.8f %.8f" % (self.date, self.Currency, self.globalTradeID, self.amount, self.rate, self.am_BTC)
+
+                if(len(file_data) != 0):
+                    file_data = file_data[len(header):]
+
+                beg = 0
+                end = beg
+
+		s2 = ""
+		exist = True
 			
-			i = 0
-			s2 = ""
-			exist = True
-			
-			while i<len(file_data):
-				count = 0
-				if file_data[i:i+4] == "2018":
-					while count != 3:
-						if file_data[i] == ".":
-							count+=1
-						if count != 3:
-							s2 += file_data[i]
-						else:
-							s2 += file_data[i:i+9]
-						i+=1
-					
-				if s2 == s:
-					exist = False
-					
-				s2 = ""
-				i+=1
-			
-			if exist:
-				fo.write(s)
-				fo.write("\n\n")
-				print "%s Found a 1>BTC sell" % (self.date)
-				
-			fo.write(file_data)
-			fo.close()
+		while end<len(file_data):
+
+                    if file_data[end] == "\n":
+                        s2 = file_data[beg:end]
+                        beg = end + 1
+
+                    if s2 == s:
+                        exist = False
+			       			
+		    s2 = ""
+		    end+=1
+		
+                fo.write(header)
+
+		if exist:
+		    fo.write(s)
+		    fo.write("\n")
+		    print "%s Found a 1>BTC sell" % (self.date)		
+		    
+                fo.write(file_data)
+		fo.close()
 		
 			
-		os.chdir("/Users/Max/Desktop/CRYPTO/Poloniex")
+	    os.chdir(os.path.dirname(os.path.realpath(__file__)))
 		
 def parser(string,name):
 	
@@ -197,8 +203,11 @@ def parser(string,name):
 		
 		if string[i:i+7] == "tradeID":
 			i+=10
-			tradeID = string[i:i+7]
-			i+=10
+                        j = i
+                        while string[j] != ",":
+                            j+=1
+			tradeID = string[i:j]
+                        i+=10
 		if string[i:i+6] == "amount":
 			i+=11
 			amount = string[i:i+10]
@@ -253,25 +262,27 @@ def parser(string,name):
 				Book2.globalTradeID = int(globalTradeID)
 				Book2.WriteSell()
 				
-			'''if Book.amount != 0.0:
+			if Book.amount != 0.0:
 				BookM.Market(Book)
 				BookMB.Market(Book)
 			if Book2.amount != 0.0:
 				BookM.Market(Book2)
-				BookMS.Market(Book2)'''
+				BookMS.Market(Book2)
 			
 			del Book
 			del Book2
 			i+=15
 		i+=1
 	
-	'''BookM.PrintMBook()
-	BookMB.PrintMBook()
-	BookMS.PrintMBook()
+        BookMB.WriteBuy()
+        BookMS.WriteSell()
+	#BookM.PrintMBook()
+        #BookMB.PrintMBook()
+        #BookMS.PrintMBook()
 	
 	del BookMB
 	del BookMS 
-	del BookM'''
+	del BookM
 
 
 

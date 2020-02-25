@@ -1,8 +1,10 @@
 import os
 import sys
+import time
 import datetime
 
 class Ticker:
+        Date = ""
 	Currency = ""
 	Last = 0.0
 	QuoteVolume = 0.0
@@ -17,7 +19,8 @@ class Ticker:
 	Market = []
 	
 	def __init__(self):
-		self.Currency = ""
+		self.Date = "{:%Y-%m-%d %H:%M:%S}".format(datetime.datetime.now())
+                self.Currency = ""
 		self.Last = 0.0
 		self.QuoteVolume = 0.0
 		self.High24hr = 0.0
@@ -31,6 +34,7 @@ class Ticker:
 		self.Market = []
 		
 	def __del__(self):
+                self.Date = ""
 		self.Currency = ""
 		self.Last = 0.0
 		self.QuoteVolume = 0.0
@@ -45,47 +49,57 @@ class Ticker:
 		del self.Market[:]
 	
 	def PrinT(self):
-		print "%s %.8f %.8f %.8f %d %.8f %.8f %.8f %.8f %d %.8f" % (self.Currency, self.Last, self.QuoteVolume, self.High24hr, self.isFrozen, self.HighestBid, self.PercentChange, self.Low24hr, self.LowestAsk, self.ID, self.BaseVolume)
+		print "%s %.8f %.8f %.8f %d %.8f %.8f %.8f %.8f %d %.8f" % \
+                (self.Currency, self.Last, self.QuoteVolume, self.High24hr
+                , self.isFrozen, self.HighestBid, self.PercentChange, self.Low24hr
+                , self.LowestAsk, self.ID, self.BaseVolume)
 		
 	def PrintM(self):
-		
 		for market in self.Market:
 			market.PrinT()
 			
 				
 	def WriteM(self):
-	
-		os.chdir("/Users/Max/Desktop/Poloniex/Ticker")
+		os.chdir(os.path.dirname(os.path.realpath(__file__)) + "/Ticker")
 		
 		for market in self.Market:
-			if not os.path.exists("/Users/Max/Desktop/Poloniex/Ticker/" + market.Currency):
-   				os.makedirs("/Users/Max/Desktop/Poloniex/Ticker/" + market.Currency)
+			if not os.path.exists(os.path.dirname(os.path.realpath(__file__)) + "/Ticker/" + market.Currency):
+   				os.makedirs(os.path.dirname(os.path.realpath(__file__)) + "/Ticker/" + market.Currency)
+   		        
+   			os.chdir(os.path.dirname(os.path.realpath(__file__)) + "/Ticker/" + market.Currency)
    			
-   			os.chdir("/Users/Max/Desktop/Poloniex/Ticker/" + market.Currency)
-   			
-			name = market.Currency + ".txt"
-			
+			name = "Ticker.txt"
+			header = "DATE -- CURRENCY -- LAST -- QUOTE_VOLUME -- PER_CHG -- 24_HIGH -- 24_LOW -- HIGH_BID -- LOW_ASK -- BASE_VOLUME - ID - F -\n"
+
 			fo = open(name, "a+")
 			fo.seek(0,0)
 			file_data = fo.read()
 			fo.seek(0,0)
 			fo.truncate()
+                        
+			top = True
+                        if(len(file_data) != 0):
+                            file_data = file_data[len(header):]
+                            top_date = time.mktime(datetime.datetime.strptime(file_data[0:19],"%Y-%m-%d %H:%M:%S").timetuple())
+                            incoming_date = time.mktime(datetime.datetime.strptime(self.Date,"%Y-%m-%d %H:%M:%S").timetuple())
+                            if incoming_date - top_date <= 0:
+                                top = False
+
+			fo.write(header)
+
+                        if top:
+			    fo.write("%s %s %.8f %.8f %.8f %.8f %.8f %.8f %.8f %.8f %d %d\n" 
+                                % (market.Date, market.Currency, market.Last, market.QuoteVolume, market.PercentChange
+                                , market.High24hr, market.Low24hr, market.HighestBid, market.LowestAsk
+                                , market.BaseVolume, market.ID, market.isFrozen))
 			
-			fo.write("{:%Y-%m-%d %H:%M:%S}\n".format(datetime.datetime.now()))
-			fo.write("CURRENCY -- LAST -- QUOTE_VOLUME -- PER_CHG -- 24_HIGH -- 24_LOW -- HIGH_BID  -- LOW_ASK -- BASE_VOLUME - ID - F -\n")
-			fo.write("%s %.8f %.8f %.8f %.8f %.8f %.8f %.8f %.8f %d %d\n" % (market.Currency, market.Last, market.QuoteVolume, market.PercentChange, market.High24hr, market.Low24hr, market.HighestBid, market.LowestAsk, market.BaseVolume, market.ID, market.isFrozen))
-			fo.write("\n")
 			fo.write(file_data)
-			
-			
-			
 			fo.close()
+
+			os.chdir(os.path.dirname(os.path.realpath(__file__)) + "/Ticker")
 			
-			os.chdir("/Users/Max/Desktop/Poloniex/Ticker")
-			
-		os.chdir("/Users/Max/Desktop/Poloniex")
-		
-		
+		os.chdir(os.path.dirname(os.path.realpath(__file__)))
+	
 def parser(string):
 	
 	i=0 
@@ -97,12 +111,15 @@ def parser(string):
 	while i<len(string):
 		
 		if string[i] == '_':
-			if string[i-4] != "'":
-				Currency = string[i-4:i+4]
-				#print Currency 
+			Cuerrency = ""
+                        j = i-3
+                        while string[j] != "'":
+                            j+=1
+                        if string[i-4] != "'":
+				Currency = string[i-4:j]
 			else:
-				Currency = string[i-3:i+4]
-				#print Currency 
+				Currency = string[i-3:j]
+                         
 			i+=9
 			
 		if string[i:i+4] == "last":
@@ -233,8 +250,7 @@ def parser(string):
 				BTC.Low24hr = float(Low24hr)
 				BTC.LowestAsk = float(LowestAsk)
 				BTC.ID = int(ID)
-				BTC.BaseVolume = float(BaseVolume)
-				
+				BTC.BaseVolume = float(BaseVolume)	
 				BTC_Market.Market = BTC_Market.Market + [BTC]
 				del BTC
 				
@@ -297,13 +313,12 @@ def parser(string):
 
 			
 		i+=1
-		
-		
-	BTC_Market.PrintM()
+			
+	#BTC_Market.PrintM()
 	BTC_Market.WriteM()
-	ETH_Market.PrintM()
-	USDT_Market.PrintM()
-	XMR_Market.PrintM()
+	#ETH_Market.PrintM()
+	#USDT_Market.PrintM()
+	#XMR_Market.PrintM()
 		
 	del BTC_Market
 	del ETH_Market
