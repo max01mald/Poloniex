@@ -1,0 +1,48 @@
+from Ticker.Ticker import Ticker
+import os
+import sys
+import re
+
+def GetPairs(level):
+    pairs = os.listdir(os.path.dirname(os.path.realpath(__file__)) + "/" + level)
+
+    del_list = []
+    for i in range(len(pairs)):
+        if "." in str(pairs[i]) or "cache" in str(pairs[i]):
+           print("del " + pairs[i]) 
+	   del_list.append(i)
+
+    print(len(pairs))
+
+    for i in range(len(del_list)):
+        print(pairs[del_list[i]])
+        del(pairs[del_list[i]])
+
+    print(len(pairs))
+
+    return pairs
+
+
+def GetTicker(pairs):
+    market = []
+
+    for pair in pairs:
+        ticker = Ticker()
+        print(pair)
+        ticker.ReadM(pair)
+        #ticker.PrintM()
+        market.append(ticker)
+
+    del(ticker)
+
+    return market
+
+pairs = GetPairs("Ticker")
+market_ticker = GetTicker(pairs)
+
+print(len(market_ticker))
+
+for ticker in market_ticker:
+    ticker.GetSentiment()
+    break
+    ticker.PrintM()
