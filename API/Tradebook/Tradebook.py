@@ -51,11 +51,6 @@ class Book:
             if not os.path.exists(os.path.dirname(os.path.realpath(__file__)) + self.Currency):
                 os.makedirs(os.path.dirname(os.path.realpath(__file__)) + self.Currency)
 
-            os.chdir(os.path.dirname(os.path.realpath(__file__)))
-
-            if not os.path.exists(os.path.dirname(os.path.realpath(__file__)) + self.Currency):
-                os.makedirs(os.path.dirname(os.path.realpath(__file__)) + self.Currency)
-
             os.chdir(os.path.dirname(os.path.realpath(__file__)) + self.Currency)
 
             name = self.Type + ".txt"

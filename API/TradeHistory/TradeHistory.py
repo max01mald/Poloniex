@@ -64,16 +64,11 @@ class TradeBook:
 			self.Trades = self.Trades + [NBook]
 			
 	def WriteBuy(self):
-	    
-            if not os.path.exists(os.path.dirname(os.path.realpath(__file__)) + "/TradeHistory/"):
-                os.makedirs(os.path.dirname(os.path.realpath(__file__)) + "/TradeHistory/")
-            
-            os.chdir(os.path.dirname(os.path.realpath(__file__)) + "/TradeHistory")
-		
-	    if not os.path.exists(os.path.dirname(os.path.realpath(__file__)) + "/TradeHistory/" + self.Currency):
-   	    	os.makedirs(os.path.dirname(os.path.realpath(__file__)) + "/TradeHistory/" + self.Currency)
+	    		
+	    if not os.path.exists(os.path.dirname(os.path.realpath(__file__)) + self.Currency):
+   	    	os.makedirs(os.path.dirname(os.path.realpath(__file__)) + self.Currency)
    			
-   	    os.chdir(os.path.dirname(os.path.realpath(__file__)) + "/TradeHistory/" + self.Currency)
+   	    os.chdir(os.path.dirname(os.path.realpath(__file__)) + self.Currency)
    			
 	    name = "Buys.txt"
 			
@@ -122,16 +117,11 @@ class TradeBook:
 		
 	
 	def WriteSell(self):
-	    
-            if not os.path.exists(os.path.dirname(os.path.realpath(__file__)) + "/TradeHistory/"):
-                os.makedirs(os.path.dirname(os.path.realpath(__file__)) + "/TradeHistory/")
-
-	    os.chdir(os.path.dirname(os.path.realpath(__file__)) + "/TradeHistory")
 		
-	    if not os.path.exists(os.path.dirname(os.path.realpath(__file__)) + "/TradeHistory/" + self.Currency):
-   	    	os.makedirs(os.path.dirname(os.path.realpath(__file__)) + "/TradeHistory/" + self.Currency)
+	    if not os.path.exists(os.path.dirname(os.path.realpath(__file__)) + self.Currency):
+   	    	os.makedirs(os.path.dirname(os.path.realpath(__file__)) + self.Currency)
    			
-   	    os.chdir(os.path.dirname(os.path.realpath(__file__)) + "/TradeHistory/" + self.Currency)
+   	    os.chdir(os.path.dirname(os.path.realpath(__file__)) + self.Currency)
    			
 	    name = "Sells.txt"
 

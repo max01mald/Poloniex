@@ -53,15 +53,12 @@ class ChartData:
 
     def WriteC(self, lapse):
 
-        if not os.path.exists(os.path.dirname(os.path.realpath(__file__)) + "/ChartData/"):
-            os.makedirs(os.path.dirname(os.path.realpath(__file__)) + "/ChartData/")
+        os.chdir(os.path.dirname(os.path.realpath(__file__)))
 
-        os.chdir(os.path.dirname(os.path.realpath(__file__)) + "/ChartData/")
-
-        if not os.path.exists(os.path.dirname(os.path.realpath(__file__)) + "/ChartData/" + self.Currency):
-            os.makedirs(os.path.dirname(os.path.realpath(__file__)) + "/ChartData/" + self.Currency)
+        if not os.path.exists(os.path.dirname(os.path.realpath(__file__)) + self.Currency):
+            os.makedirs(os.path.dirname(os.path.realpath(__file__)) + self.Currency)
                         
-        os.chdir(os.path.dirname(os.path.realpath(__file__)) + "/ChartData/" + self.Currency)
+        os.chdir(os.path.dirname(os.path.realpath(__file__)) + self.Currency)
         
         name = str(int(lapse)/60)+"min_Chart.txt"
         header = "DATE -- HIGH -- LOW -- OPEN -- CLOSE -- VOLUME -- QUOTE_VOLUME -- WEIGHTED_AVERAGE \n"
@@ -90,7 +87,7 @@ class ChartData:
         fo.write(file_data)
         fo.close()
 
-        os.chdir(os.path.dirname(os.path.realpath(__file__)) + "/Ticker")
+        os.chdir(os.path.dirname(os.path.realpath(__file__)) + "/ChartData")
 
         os.chdir(os.path.dirname(os.path.realpath(__file__)))
 
